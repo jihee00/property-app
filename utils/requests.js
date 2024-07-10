@@ -16,6 +16,7 @@ async function fetchProperties() {
   } catch (error) {
     console.log(error);
     return [];
+
   }
 }
 
