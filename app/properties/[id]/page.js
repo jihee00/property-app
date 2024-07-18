@@ -1,22 +1,33 @@
 'use client'
-
 import React from 'react'
-import { useRouter, useParams, useSearchParams, usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { fetchProperty } from '@/utils/requests';
 
-const PropertiesPage = () => {
-    const router = useRouter();
-    const searchParams = useSearchParams();
+const PropertyPage = () => {
     const { id } = useParams();
-    const name = searchParams.get('name');
-    const pathname = usePathname();
 
-    return (
-        <div>
-            <button onClick={() => router.push('/')} 
-            className='bg-blue-500 p-2'>
-                Go Home {pathname} </button>
-        </div>
-    );
-}
+    const [property, setProperty] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-export default PropertiesPage
+    useEffect(() => {
+        const fetchPropertyData = async () => {
+            if (!id) return;
+            try {
+                const property = await fetchProperty(id);
+                setProperty(property);
+            } catch (error) {
+                console.error('Error fetching property:', error);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        if (property === null) {
+            fetchPropertyData();
+        }
+    }, [id, property]);
+    
+};
+
+export default PropertyPage;
